@@ -1,0 +1,138 @@
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(12,11,5,4,3,2);
+
+
+//Sensor 1
+  int i=40; //trigPin//echo = i+1
+
+  //long duration;
+  float distance;
+  float pingTime;
+  float speedofSound =776.5;
+  int no;
+  int count1,count2,count3;
+  int ava;
+  
+void setup() {
+  Serial.begin(9600);
+  pinMode(i,OUTPUT);//trigpin output
+  pinMode(i+1,INPUT);//echo input
+  
+  lcd.begin(16, 2);
+  lcd.setCursor(0,0);
+  lcd.print("  K 16 SLIIT 5  ");
+  lcd.setCursor(0,1);
+  lcd.print("----------------");
+  
+       String text = Serial.readString();
+       String line1 = text.substring(0, 16);
+       String line2 = text.substring(16, 32);
+  
+}
+
+void loop() {
+      /*String text = Serial.readString();
+       String line1 = text.substring(0, 16);
+       String line2 = text.substring(16, 32); 
+
+          lcd.setCursor(0,0);
+          lcd.print(line1);
+          lcd.setCursor(0,1);
+          lcd.print(line2);*/
+
+         
+  
+   for( i=40; i<46; i=i+2)
+  {
+       
+    
+    for(int j=0; j<=2; j++)
+
+    {
+       String text = Serial.readString();
+       String line1 = text.substring(0, 16);
+       String line2 = text.substring(16, 32); 
+
+          
+                    
+
+          // Clears the trigPin
+          digitalWrite(i, LOW);
+          delayMicroseconds(2000);
+          
+          // Sets the trigPin on HIGH state for 10 micro seconds
+          digitalWrite(i, HIGH);
+          delayMicroseconds(15);
+          digitalWrite(i, LOW);
+          delayMicroseconds(10);
+          
+          // Reads the echoPin, returns the sound wave travel time in microseconds
+          pingTime = pulseIn(i+1, HIGH);
+          pingTime = pingTime/1000000.;
+          pingTime = pingTime/3600.;
+          distance = speedofSound * pingTime;
+          distance = distance/2;
+          distance = distance*63360;
+          distance = distance*2.54;
+
+           no = i/2-19;
+
+           if(distance<12) 
+           {  
+              if(i==40)count1++;
+              else if(i==42) count2++;
+              else if(i==44) count3++;
+           }
+           else 
+           {
+              if(i==40) count1=0;
+              else if(i==42) count2=0;
+              else if(i==44) count3=0;   
+           }
+
+           if(i==40 && count1 >1 ) ava=1;
+           else if(i==42 && count2 >1) ava=1;
+           else if(i==44 && count3 >1) ava=1;
+           else ava=0;
+
+           if(count1>60) count1=3;
+           else if(count2>60) count2=3;
+           else if(count3>60) count3=3;
+
+          //Serial.print("Sensor = ");
+          Serial.print(i/2-19);
+          Serial.println(ava);
+          
+          
+          //Serial.print(i);
+          //Serial.print("           distance");
+          //Serial.println(distance);
+          
+          lcd.setCursor(0,0);
+          lcd.print(line1);
+          
+          lcd.setCursor(0,1);
+          lcd.print(line2);
+          delay(250);
+
+          
+          // Calculating the distance
+          //distance= duration*0.034/2;
+          
+          // Prints the distance on the Serial Monitor
+          //Serial.print("Distance: ");
+          //Serial.print(distance);
+          
+         
+
+          
+          
+          
+          //delay(100);
+      
+    }
+      //Serial.println();
+    
+  }
+
+}
